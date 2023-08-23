@@ -12,6 +12,8 @@ class TasksScreen extends StatefulWidget {
 }
 
 class _TasksScreenState extends State<TasksScreen> {
+  TextEditingController textEditingController = TextEditingController();
+
   List<Task> tasks = [
     Task(name: 'Buy Milk'),
     Task(name: 'Buy Eggs'),
@@ -31,7 +33,16 @@ class _TasksScreenState extends State<TasksScreen> {
               child: Container(
                 padding: EdgeInsets.only(
                     bottom: MediaQuery.of(context).viewInsets.bottom),
-                child: const AddTaskScreen(),
+                child: AddTaskScreen(
+                  addTask: () {
+                    setState(() {
+                      tasks.add(Task(name: textEditingController.text));
+                      textEditingController.clear();
+                    });
+                    Navigator.pop(context);
+                  },
+                  textEditingController: textEditingController,
+                ),
               ),
             ),
           );
@@ -44,10 +55,10 @@ class _TasksScreenState extends State<TasksScreen> {
           Container(
             padding: const EdgeInsets.only(
                 top: 60.0, left: 30.0, right: 30.0, bottom: 30.0),
-            child: const Column(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                CircleAvatar(
+                const CircleAvatar(
                   backgroundColor: Colors.white,
                   radius: 30.0,
                   child: Icon(
@@ -56,10 +67,10 @@ class _TasksScreenState extends State<TasksScreen> {
                     size: 30.0,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10.0,
                 ),
-                Text(
+                const Text(
                   'Todoey',
                   style: TextStyle(
                     color: Colors.white,
@@ -68,8 +79,8 @@ class _TasksScreenState extends State<TasksScreen> {
                   ),
                 ),
                 Text(
-                  '12 Tasks',
-                  style: TextStyle(
+                  '${tasks.length} Tasks',
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 18,
                   ),
@@ -106,5 +117,11 @@ class _TasksScreenState extends State<TasksScreen> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    textEditingController.dispose();
+    super.dispose();
   }
 }

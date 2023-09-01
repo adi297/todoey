@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:todoey/screens/add_task_screen.dart';
 import 'package:todoey/widgets/task_tile.dart';
-import 'package:todoey/models/task.dart';
+
+import '../models/task_data.dart';
 
 class TasksScreen extends StatefulWidget {
   const TasksScreen({super.key});
@@ -13,12 +15,6 @@ class TasksScreen extends StatefulWidget {
 
 class _TasksScreenState extends State<TasksScreen> {
   TextEditingController textEditingController = TextEditingController();
-
-  List<Task> tasks = [
-    Task(name: 'Buy Milk'),
-    Task(name: 'Buy Eggs'),
-    Task(name: 'Buy Detergent'),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +32,8 @@ class _TasksScreenState extends State<TasksScreen> {
                 child: AddTaskScreen(
                   addTask: () {
                     setState(() {
-                      tasks.add(Task(name: textEditingController.text));
+                      Provider.of<TaskData>(context, listen: false)
+                          .addTaskData(textEditingController.text);
                       textEditingController.clear();
                     });
                     Navigator.pop(context);
@@ -79,7 +76,7 @@ class _TasksScreenState extends State<TasksScreen> {
                   ),
                 ),
                 Text(
-                  '${tasks.length} Tasks',
+                  '${Provider.of<TaskData>(context).tasks.length} Tasks',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -101,16 +98,19 @@ class _TasksScreenState extends State<TasksScreen> {
               child: ListView.builder(
                 itemBuilder: (context, index) {
                   return TaskTile(
-                    taskTitle: tasks[index].name,
+                    taskTitle: Provider.of<TaskData>(context).tasks[index].name,
                     checkBoxCallBack: (bool? checkBoxState) {
                       setState(() {
-                        tasks[index].toggleDone();
+                        Provider.of<TaskData>(context, listen: false)
+                            .tasks[index]
+                            .toggleDone();
                       });
                     },
-                    isChecked: tasks[index].isDone,
+                    isChecked:
+                        Provider.of<TaskData>(context).tasks[index].isDone,
                   );
                 },
-                itemCount: tasks.length,
+                itemCount: Provider.of<TaskData>(context).tasks.length,
               ),
             ),
           ),
